@@ -1,0 +1,73 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = "mysql://root@localhost:3306/bebajukita"
+}
+
+model admin {
+  id        Int      @id @default(autoincrement())
+  nama      String   @default("")
+  email     String   @default("")
+  password  String   @default("")
+  createdAt DateTime @default(now())
+  updateAt  DateTime @updatedAt
+}
+
+model cust {
+  id        Int         @id @default(autoincrement())
+  nama      String      @default("")
+  email     String      @default("")
+  password  String      @default("")
+  telp      String      @default("")
+  createdAt DateTime    @default(now())
+  updateAt  DateTime    @updatedAt
+  transaksi transaksi[]
+}
+
+model gaun {
+  id               Int                @id @default(autoincrement())
+  nama             String             @default("")
+  harga            Float              @default(0) @db.Double
+  type             String             @default("")
+  ukuran           String             @default("")
+  warna            String             @default("")
+  detail           String             @default("") @db.Text
+  gambar           String             @default("")
+  createdAt        DateTime           @default(now())
+  updateAt         DateTime           @updatedAt
+  detail_transaksi detail_transaksi[]
+}
+
+model transaksi {
+  id               Int                @id @default(autoincrement())
+  id_cust          Int                @default(0)
+  tgl_sewa         String             @default("")
+  tgl_kembali      String             @default("")
+  status_payment   String             @default("")
+  status_sewa      String             @default("")
+  createdAt        DateTime           @default(now())
+  updateAt         DateTime           @updatedAt
+  cust_detail      cust               @relation(fields: [id_cust], references: [id])
+  detail_transaksi detail_transaksi[]
+}
+
+model detail_transaksi {
+  id               Int       @id @default(autoincrement())
+  id_transaksi     Int       @default(0)
+  id_gaun          Int       @default(0)
+  jumlah           Int       @default(0)
+  harga            Float     @default(0) @db.Double
+  createdAt        DateTime  @default(now())
+  updateAt         DateTime  @updatedAt
+  transaksi_detail transaksi @relation(fields: [id_transaksi], references: [id])
+  gaun_detail      gaun      @relation(fields: [id_gaun], references: [id])
+}
